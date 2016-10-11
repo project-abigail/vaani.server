@@ -4,7 +4,6 @@ node_modules
 /app-*.zip
 /config.json
 /.google.json
-/lib/parser/sl-parser.js
 
 *.log
 .DS_Store

@@ -15,7 +15,6 @@ const shortid = require('shortid');
 const WebSocketServer = require('ws').Server;
 const stt = require('./lib/stt');
 const watson = require('watson-developer-cloud');
-const parser = require('./lib/parser');
 
 const sorryUnderstand = 'Sorry, but I did not quite understand.';
 const sorryTooLong = 'Sorry, but this was a bit too long for me.';
@@ -170,7 +169,8 @@ const serve = (config, callback) => {
     const interpret = (command, confidence) => {
       var product;
       try {
-        product = parser.parse(command);
+        // Parsing should happen here.
+        product = (command);
       } catch (ex) {
         log('problem interpreting - ' + command);
         answer(ERROR_PARSING, sorryUnderstand, command, confidence);

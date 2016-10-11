@@ -30,7 +30,6 @@ cp package.json app
 cp *.js app
 cp -r lib app
 cp prunelog app
-rm -f app/lib/parser/sl-parser.js
 
 # TLS
 mkdir app/resources

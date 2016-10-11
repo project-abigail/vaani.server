@@ -20,7 +20,6 @@
     "grpc": "^0.15.0",
     "http": "0.0.0",
     "path": "^0.12.7",
-    "pegjs": "^0.9.0",
     "process": "^0.11.7",
     "shortid": "^2.2.6",
     "stream": "0.0.2",
@@ -30,7 +29,6 @@
   },
   "engine": "node 6.7.0",
   "scripts": {
-    "install": "pegjs lib/parser/sl.pegjs lib/parser/sl-parser.js",
     "start": "node app.js"
   },
   "main": "index.js",
