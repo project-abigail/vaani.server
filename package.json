@@ -1,17 +1,16 @@
 {
-  "name": "vaani.server",
-  "version": "0.0.1",
-  "description": "Server for Project Vaani",
+  "name": "abigail-voice-server",
+  "version": "1.0.0",
+  "description": "A voice server for Project Abigail",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mozilla/vaani.server.git"
+    "url": "git+https://github.com/project-abigail/voice-server.git"
   },
-  "author": "Kelly Davis <kdavis@mozilla.com>",
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/mozilla/vaani.server/issues"
+    "url": "https://github.com/project-abigail/voice-server/issues"
   },
-  "homepage": "https://github.com/mozilla/vaani.server#readme",
+  "homepage": "https://github.com/project-abigail/voice-server#readme",
   "dependencies": {
     "commander": "^2.9.0",
     "evernote": "^1.25.82",
@@ -30,9 +29,14 @@
     "watson-developer-cloud": "^1.12.4",
     "ws": "^1.0.1"
   },
-  "engine": "node 6.2.2",
+  "engine": "node 6.7.0",
   "scripts": {
     "install": "pegjs lib/parser/sl.pegjs lib/parser/sl-parser.js",
     "start": "node app.js"
-  }
+  },
+  "main": "index.js",
+  "keywords": [
+    "IOT",
+    "Connected devices"
+  ]
 }

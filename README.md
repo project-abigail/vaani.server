@@ -1,8 +1,8 @@
-
-[![Build Status](https://travis-ci.org/mozilla/vaani.server.svg?branch=master)](https://travis-ci.org/mozilla/vaani.server)
-
-Vaani server
+# Voice server
 ------------
+
+> A voice server for Project Abigail.
+
 This is the back-end service for the Mozilla's Connected Devices project [Vaani local](https://wiki.mozilla.org/Vaani).
 It provides all required functionality for the [Vaani client](https://github.com/mozilla/vaani.client).
 
