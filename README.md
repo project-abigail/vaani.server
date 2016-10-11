@@ -2,11 +2,7 @@
 
 > A voice server for Project Abigail.
 
-This is the back-end service for the Mozilla's Connected Devices project [Vaani local](https://wiki.mozilla.org/Vaani).
-It provides all required functionality for the [Vaani client](https://github.com/mozilla/vaani.client).
-
-Prerequisites
------------
+## Prerequisites
 - Linux or OSX based system
 - Node.js >= 6.0
 

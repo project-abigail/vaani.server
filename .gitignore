@@ -9,9 +9,6 @@ node_modules
 .DS_Store
 /log
 
-# STT Test logs
-resources/stt/wav/*.json
-
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
