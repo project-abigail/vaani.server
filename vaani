@@ -25,11 +25,10 @@ program
     .description('Vaani command line client.')
     .option('-s, --server [url]',           'Vaani server URL. If not specified, starts a local server and connects to it.')
     .option('-r, --recognizer [provider]',  'Overrides the default STT recognition service provider in config file. Only available for local serving (ignored in case of -s option).')
-    .option('-e, --evernote [token]',       'Evernote access token. By default it uses the token from the config.json file.')
     .option('-v, --validate',               'Validate Vaani server certificate.')
     .option('-m, --mute',                   'No audio output.')
     .option('-q, --quiet',                  'No printing of server responses.')
-    .option('-n, --no-adding',              'No adding of items to Evernote.');
+    .option('-n, --no-adding',              'No adding of items to a list.');
 
 program
     .command('tell [text...]')
@@ -50,7 +49,6 @@ program.parse(process.argv);
 config.port = 8585; // for development and testing, as port 80 is typically blocked
 config.secure = false; // no security required for development and testing
 config.stt.default = program.recognizer || config.stt.default;
-config.evernote.authtoken = program.evernote || config.evernote.authtoken;
 
 const text_to_speech = watson.text_to_speech(config.tts.watson);
 
@@ -62,8 +60,6 @@ const send = (serverurl, getaudio, callback) => {
     var server = url.parse(serverurl, true, false),
         options = { rejectUnauthorized: !!program.validate };
 
-    if(program.adding)
-        server.query.authtoken = config.evernote.authtoken;
     server.pathname = server.pathname || '/';
     serverurl = url.format(server);
     if (server.protocol === 'wss:') {

@@ -13,7 +13,6 @@
   "homepage": "https://github.com/project-abigail/voice-server#readme",
   "dependencies": {
     "commander": "^2.9.0",
-    "evernote": "^1.25.82",
     "express": "^4.14.0",
     "fs": "0.0.2",
     "google-auto-auth": "^0.2.4",

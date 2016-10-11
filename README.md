@@ -1,5 +1,4 @@
 # Voice server
-------------
 
 > A voice server for Project Abigail.
 
@@ -9,30 +8,30 @@ It provides all required functionality for the [Vaani client](https://github.com
 Prerequisites
 -----------
 - Linux or OSX based system
-- Node.js >= 4.0
+- Node.js >= 6.0
 
 Preparation
 -----------
 To be able to run the Vaani server, you need the following:
 - A running instance of a [Kaldi speech to text (STT) gstreamer server](https://github.com/alumae/kaldi-gstreamer-server).
 - An access token to the IBM Watson Text to speech (TTS) service. You can get one from [bluemix](https://bluemix.net).
-- An authentication token for the Evernote sandbox server. You can get one from [Evernote](https://dev.evernote.com/).
 
 Based on this requirements, you have to create a ```config.json``` file in the root of your cloned project. Here's how it should look like (replace all ```<some_*>``` fields by your specific values):
 
 ``` javascript
 {
-    "port": 8080,
-    "kaldi": {
-        "url": "wss://<some_ip>:<some_port>/client/ws/speech"
-    },
-    "watsontts": {
-        "password": "<some_password_token>",
-        "username": "<some_username_token>"
-    },
-    "evernote": {
-        "authtoken": "<some_authentication_token>"
+  "port": 8080,
+  "stt": {
+    "default": "kaldi",
+    "url": "wss://<some_ip>:<some_port>/client/ws/speech"
+  },
+  "tts": {
+    "watson": {
+      "password": "<some_password_token>",
+      "username": "<some_username_token>",
+      "version": "v1"
     }
+  }
 }
 ```
 
@@ -64,7 +63,7 @@ During this call, the server should
 - Receive the client's PCM audio via that connection (till the "EOS" message is sent)
 - Use the Kaldi STT server to translate that audio data into text (in the above case this will be "add milk to my shopping list.")
 - Parse that sentence to extract the product name (in this case "milk") and build an answer from it ("Added milk to your shopping list.")
-- Add the product (in this case "milk") to the Evernote "Vaani Shopping List", which may need to be created.
+- Add the product (in this case "milk") to the "Vaani Shopping List", which may need to be created.
 - Use the Watson TTS service to translate the answer text into speech audio data (Wave format)
 - Send a JSON status message back to the client (containing a status code, textual forms of command and response and a confidence level)
 - Send the answer audio data back to the client
