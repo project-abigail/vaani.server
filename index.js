@@ -15,9 +15,9 @@ const shortid = require('shortid');
 const WebSocketServer = require('ws').Server;
 const stt = require('./lib/stt');
 const watson = require('watson-developer-cloud');
+const IntentParser = require('intent-parser');
 
-const sorryUnderstand = 'Sorry, but I did not quite understand.';
-const sorryTooLong = 'Sorry, but this was a bit too long for me.';
+const sorryUnderstand = 'I did not understand that. Can you repeat?';
 const sorryService = 'Sorry, the service is not available at the moment.';
 const unknown = '<unknown>';
 
@@ -110,6 +110,8 @@ const serve = (config, callback) => {
       query = url.parse(client.upgradeReq.url, true).query,
       sttParams = { audio: audio };
 
+    const intentParser = new IntentParser();
+
     audio.on('error', err => log('problem passing audio - ' + err));
     rawlog.on('error', err => log('problem logging audio - ' + err));
 
@@ -127,6 +129,22 @@ const serve = (config, callback) => {
       closeSinks();
       client.close();
       log('failed - ' + message);
+    };
+
+    const interpret = (command, confidence) => {
+      // Some cleaning. Remove things like [SMACK], [COUGH] and such...
+      command = command
+        .replace(/\[\w+\]/g, '');
+
+      intentParser.parse(command)
+        .then((res) => {
+          // @todo Implement the query case.
+          answer(OK, res.confirmation, command, confidence);
+        })
+        .catch((err) => {
+          log('problem interpreting - ' + command, err);
+          answer(ERROR_PARSING, sorryUnderstand, command, confidence);
+        });
     };
 
     const answer = (status, message, command, confidence) => {
@@ -163,25 +181,6 @@ const serve = (config, callback) => {
       } catch (ex) {
         fail('answering - ' + JSON.stringify(ex));
       }
-    };
-
-    const interpret = (command, confidence) => {
-      var product;
-      try {
-        // Parsing should happen here.
-        product = (command);
-      } catch (ex) {
-        log('problem interpreting - ' + command);
-        answer(ERROR_PARSING, sorryUnderstand, command, confidence);
-        return;
-      }
-      if (product.split(' ').length > config.maxwords) {
-        log('product name too long - ' + product);
-        answer(ERROR_PARSING, sorryTooLong, command, confidence);
-        return;
-      }
-
-      answer(OK, 'Virtually added ' + product + ' to your shopping list.', command, confidence);
     };
 
     client.on('error', err => fail('client connection' + err));
