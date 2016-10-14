@@ -69,15 +69,15 @@ const serve = (config, callback) => {
 
   const app = express();
   app.use((req, res) => {
-    if (req.client.authorized) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end('{ "status": "approved" }');
-      log('sending status approved');
-    } else {
+    //if (req.client.authorized) {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end('{ "status": "approved" }');
+    log('sending status approved');
+    /*} else {
       res.writeHead(401, { 'Content-Type': 'application/json' });
       res.end('{ "status": "denied" }');
       log('sending status declined');
-    }
+    }*/
   });
   server.on('request', app);
 
@@ -99,11 +99,10 @@ const serve = (config, callback) => {
   const text_to_speech = watson.text_to_speech(config.tts.watson);
 
   wss.on('connection', (client) => {
-
     var clientindex = clientcounter++;
     const log = s => console.log(
       'T: ' + new Date().toISOString() + ' ' +
-      'C: ' + clientindex + ' - ' + s);
+      'C: ' + clientindex + ' - ', s);
 
     var audio = new stream.PassThrough(),
       logfile = path.join(logdir, shortid.generate()),

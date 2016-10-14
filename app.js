@@ -7,5 +7,5 @@
 
 console.log('starting server...');
 require('.').serve(null, () => {
-    console.log('server ready');
+  console.log('server ready');
 });
