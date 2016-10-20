@@ -15,15 +15,18 @@ const shortid = require('shortid');
 const WebSocketServer = require('ws').Server;
 const stt = require('./lib/stt');
 const watson = require('watson-developer-cloud');
+const fetch = require('node-fetch');
 const IntentParser = require('intent-parser');
 
 const sorryUnderstand = 'I did not understand that. Can you repeat?';
 const sorryService = 'Sorry, the service is not available at the moment.';
+const sorryNetwork = 'Sorry, I was not able to save this reminder.';
 const unknown = '<unknown>';
 
 const OK = 0;
 const ERROR_PARSING = 1;
 const ERROR_EXECUTING = 2;
+const ERROR_SAVING = 3;
 const ERROR_STT = 100;
 
 const logdir = './log/';
@@ -109,6 +112,7 @@ const serve = (config, callback) => {
       rawlog = fs.createWriteStream(logfile + '.raw'),
       query = url.parse(client.upgradeReq.url, true).query,
       sttParams = { audio: audio };
+    const token = query.authtoken;
 
     const intentParser = new IntentParser();
 
@@ -132,18 +136,91 @@ const serve = (config, callback) => {
     };
 
     const interpret = (command, confidence) => {
+      console.log(command, confidence);
+
       // Some cleaning. Remove things like [SMACK], [COUGH] and such...
       command = command
         .replace(/\[\w+\]/g, '');
 
+      const headers = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        Authorization: `Bearer ${token}`,
+      };
+      let reminder = {};
+
       intentParser.parse(command)
         .then((res) => {
+          console.log(res);
+
+          reminder = res;
+
+          return fetch('https://calendar.knilxof.org/api/v2/users/myself/relations',
+            {
+              headers,
+            });
+        })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('Cannot get the users id.');
+          }
+
+          return res.json();
+        })
+        .then((userObjs) => {
+          // Get the id for the recipient of this reminder.
+          const users = reminder.recipients.map((forename) => {
+            let user = {};
+
+            userObjs.some((userObj) => {
+              if (userObj.forename.toLowerCase() === forename.toLowerCase()) {
+                user = { id: userObj.id };
+                return true;
+              }
+            });
+
+            return user;
+          });
+
+          log('users');
+          log(users);
+
+          const body = JSON.stringify({
+            recipients: users,
+            action: reminder.action,
+            due: reminder.due,
+          });
+
+          log('body');
+          log(body);
+
+          // Create the reminder on Cue server.
+          return fetch('https://calendar.knilxof.org/api/v2/reminders',
+            {
+              method: 'POST',
+              headers,
+              body,
+            })
+            .then((res) => {
+              if (!res.ok) {
+                throw new Error('Cannot save the reminder');
+              }
+
+              log('Saving successful.');
+            });
+        })
+        .then(() => {
           // @todo Implement the query case.
-          answer(OK, res.confirmation, command, confidence);
+          answer(OK, reminder.confirmation, command, confidence);
         })
         .catch((err) => {
-          log('problem interpreting - ' + command, err);
-          answer(ERROR_PARSING, sorryUnderstand, command, confidence);
+          if (!reminder) {
+            log('problem interpreting - ' + command, err);
+            answer(ERROR_PARSING, sorryUnderstand, command, confidence);
+            return;
+          }
+
+          log('problem saving reminder - ', err);
+          answer(ERROR_SAVING, sorryNetwork, err);
         });
     };
 
@@ -194,8 +271,6 @@ const serve = (config, callback) => {
           interpret(res.transcript, res.confidence);
       }
     );
-
-
   });
 
   callback && callback();
