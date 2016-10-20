@@ -172,6 +172,10 @@ const serve = (config, callback) => {
             let user = {};
 
             userObjs.some((userObj) => {
+              if (forename.toLowerCase() === 'me') {
+                user = { id: 'myself' };
+                return true;
+              }
               if (userObj.forename.toLowerCase() === forename.toLowerCase()) {
                 user = { id: userObj.id };
                 return true;
