@@ -41,6 +41,7 @@ const getConfig = () => {
   config.secure = !!config.secure;
   config.port = process.env.PORT || config.port || (config.secure ? 443 : 80);
   config.maxwords = config.maxwords || 5;
+  config.intentParser = config.intentParser || {};
   return config;
 };
 
@@ -172,7 +173,7 @@ const serve = (config, callback) => {
             let user = {};
 
             userObjs.some((userObj) => {
-              if (config.supportsReminderForMyself &&
+              if (config.intentParser.supportsReminderForMyself &&
                   forename.toLowerCase() === 'me') {
                 user = { id: 'myself' };
                 return true;
