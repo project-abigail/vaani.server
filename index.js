@@ -173,7 +173,8 @@ const serve = (config, callback) => {
             let user = {};
 
             userObjs.some((userObj) => {
-              if (config.intentParser.supportsReminderForMyself &&
+              // If the property is not present, it's true by default
+              if (config.intentParser.supportsReminderForMyself !== false &&
                   forename.toLowerCase() === 'me') {
                 user = { id: 'myself' };
                 return true;
