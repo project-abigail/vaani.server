@@ -172,7 +172,8 @@ const serve = (config, callback) => {
             let user = {};
 
             userObjs.some((userObj) => {
-              if (forename.toLowerCase() === 'me') {
+              if (config.supportsReminderForMyself &&
+                  forename.toLowerCase() === 'me') {
                 user = { id: 'myself' };
                 return true;
               }
